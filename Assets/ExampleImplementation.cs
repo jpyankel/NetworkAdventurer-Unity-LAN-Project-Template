@@ -36,20 +36,32 @@ public class ExampleImplementation : MonoBehaviour {
         NetworkServer.Listen(port);
         networkAdventurer.StopBroadcast(); //Stop the client from listening anymore.
         networkAdventurer.StartAsServer();
+        NetworkServer.RegisterHandler(MsgType.Connect, OnConnected_Server);
     }
     private void startAsClient() {
-        networkAdventurer.StopBroadcast();
-        networkClient = new NetworkClient();
-        networkClient.RegisterHandler(MsgType.Connect, OnConnected_Client);
         int port = 4444;
         if (portInputField) {
             port = int.Parse(portInputField.text);
         }
-        string ipAddress = "127.0.0.1";
-        if (ipInputField) {
-            ipAddress = ipInputField.text;
+        string ipAddress = null;
+        if (networkAdventurer.getSelectedConnection() != null) {
+            ipAddress = networkAdventurer.getSelectedConnection();
         }
-        networkClient.Connect(ipAddress, port);
+        else if (ipInputField) {
+            if (ipInputField.text != "")
+                ipAddress = ipInputField.text;
+        }
+
+        if (ipAddress != null) {
+            networkAdventurer.StopBroadcast();
+            networkClient = new NetworkClient();
+            networkClient.RegisterHandler(MsgType.Connect, OnConnected_Client);
+            networkClient.Connect(ipAddress, port);
+        }
+        else {
+            //TODO: Throw/Handle error
+        }
+        
     }
     private void startAsLocalClient() {
         networkClient = ClientScene.ConnectLocalServer();
@@ -74,7 +86,9 @@ public class ExampleImplementation : MonoBehaviour {
 
 
     #region --- [Server-Side Implementation] ---
-
+    private void OnConnected_Server (NetworkMessage netMsg) {
+        Debug.Log("Some client has connected to this server");
+    }
     #endregion
 
     #region --- [Client-Side Implementation] ---

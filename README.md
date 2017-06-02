@@ -2,6 +2,7 @@
 A quick-start template for prototyping LAN multiplayer games
 
 ## Features
+<img src="Screenshot_UIExample.png">
 - NetworkAdventurer, an implementation of NetworkBroadcaster that allows for tracking of multiple connections.
 - A UI for displaying connections on the same WIFI.
 - An optional space for connecting directly by IP Address.
